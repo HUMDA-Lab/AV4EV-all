@@ -139,7 +139,9 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim) {
 
 	  // we have a new magnet passing through
 	  if(speed_sensor_val != speed_sensor_pre){
-		  speed_accumu += 18.0; // 10 magnets (360/10/2 = 18 degrees per switch)
+      //speed_accumu += 60.0; // Humda 6 // 10 magnets (360/10/2 = 18 degrees per switch)
+		  // Humda-AV4EV 6 // 10 magnets (360/10/2 = 18 degrees per switch)
+      speed_accumu += 18.0; // 10 magnets (360/10/2 = 18 degrees per switch)
 		  speed_sensor_pre = speed_sensor_val;
 	  }
   }
@@ -293,11 +295,20 @@ static void MX_CAN1_Init(void)
 
   /* USER CODE END CAN1_Init 1 */
   hcan1.Instance = CAN1;
-  hcan1.Init.Prescaler = 16;
+  //original
+  //hcan1.Init.Prescaler = 16;
+  //for 250kbs CAN speed
+  //hcan1.Init.Prescaler = 4;
+  //for 500kbs CAN speed
+  hcan1.Init.Prescaler = 2;
   hcan1.Init.Mode = CAN_MODE_NORMAL;
   hcan1.Init.SyncJumpWidth = CAN_SJW_1TQ;
-  hcan1.Init.TimeSeg1 = CAN_BS1_11TQ;
-  hcan1.Init.TimeSeg2 = CAN_BS2_8TQ;
+  //original
+  //hcan1.Init.TimeSeg1 = CAN_BS1_11TQ;
+  //hcan1.Init.TimeSeg2 = CAN_BS2_8TQ;
+  //for higher CAN speeds
+  hcan1.Init.TimeSeg1 = CAN_BS1_13TQ;
+  hcan1.Init.TimeSeg2 = CAN_BS2_2TQ; 
   hcan1.Init.TimeTriggeredMode = DISABLE;
   hcan1.Init.AutoBusOff = ENABLE;
   hcan1.Init.AutoWakeUp = DISABLE;
@@ -565,6 +576,7 @@ static void MX_GPIO_Init(void)
   HAL_GPIO_WritePin(LD3_GPIO_Port, LD3_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin : PA6 */
+  //PA5 on nucleo board
   GPIO_InitStruct.Pin = GPIO_PIN_6;
   GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
   GPIO_InitStruct.Pull = GPIO_NOPULL;

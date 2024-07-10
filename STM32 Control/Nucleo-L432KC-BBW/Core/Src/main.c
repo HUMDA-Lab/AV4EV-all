@@ -221,12 +221,15 @@ int main(void)
   // IMPORTANT: DO NOT MOVE THIS COUNTER TO GLOBAL VARIABLE
   // OR IT WILL BE RESET EVERY FEW LOOPS FOR NO REASON
   int count_max = 50;
+  //int count_max = 20;
   int pressure_count = 0;
 
   double pressure_voltage;
-  double pressure_voltage_max = 5.0;
-  double pressure_voltage_min = 1.0;
-
+  //double pressure_voltage_max = 5.0;
+  //double pressure_voltage_min = 1.0;
+  //Humda-AV4EV
+  double pressure_voltage_min = 0.7;
+  double pressure_voltage_max = 4.5;
   double pressure_abs_max = 500.0;
 
   /* USER CODE END 2 */
@@ -400,11 +403,21 @@ static void MX_CAN1_Init(void)
 
   /* USER CODE END CAN1_Init 1 */
   hcan1.Instance = CAN1;
-  hcan1.Init.Prescaler = 16;
+  //original
+  //hcan1.Init.Prescaler = 16;
+  //for 250kbs CAN speed
+  //hcan1.Init.Prescaler = 4;
+  //for 500kbs CAN speed
+  hcan1.Init.Prescaler = 2;
+  
   hcan1.Init.Mode = CAN_MODE_NORMAL;
   hcan1.Init.SyncJumpWidth = CAN_SJW_1TQ;
-  hcan1.Init.TimeSeg1 = CAN_BS1_11TQ;
-  hcan1.Init.TimeSeg2 = CAN_BS2_8TQ;
+  //original
+  //hcan1.Init.TimeSeg1 = CAN_BS1_11TQ;
+  //hcan1.Init.TimeSeg2 = CAN_BS2_8TQ;
+  //for higher CAN speeds
+  hcan1.Init.TimeSeg1 = CAN_BS1_13TQ;
+  hcan1.Init.TimeSeg2 = CAN_BS2_2TQ; 
   hcan1.Init.TimeTriggeredMode = DISABLE;
   hcan1.Init.AutoBusOff = ENABLE;
   hcan1.Init.AutoWakeUp = DISABLE;

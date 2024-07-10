@@ -96,7 +96,9 @@ double kd_e = 1.00;
 
 double steer_measured = 0.0;
 double steer_desired = 0.0;
-double steer_offset = -106.0-22.77;
+//double steer_offset = -106.0-22.77;
+//Humda-AV4EV steer offset
+double steer_offset = -91;
 double steer_max = 55.0;
 
 double current = 0.0;
@@ -189,6 +191,8 @@ void send_command(){
 void send_info(){
 	// send measured steering angle on canbus
 	CAN_TxData[0] = (int)(steer_measured + steer_max);
+  CAN_TxData[1] = (int)(current);
+
     HAL_CAN_AddTxMessage(&hcan1, &TxHeader, CAN_TxData, &TxMailbox);
 
     printf(
@@ -356,13 +360,22 @@ static void MX_CAN1_Init(void)
 
   /* USER CODE BEGIN CAN1_Init 1 */
 
-  /* USER CODE END CAN1_Init 1 */
+ /* USER CODE END CAN1_Init 1 */
   hcan1.Instance = CAN1;
-  hcan1.Init.Prescaler = 16;
+  //original
+  //hcan1.Init.Prescaler = 16;
+  //for 250kbs CAN speed
+  //hcan1.Init.Prescaler = 4;
+  //for 500kbs CAN speed
+  hcan1.Init.Prescaler = 2;
   hcan1.Init.Mode = CAN_MODE_NORMAL;
   hcan1.Init.SyncJumpWidth = CAN_SJW_1TQ;
-  hcan1.Init.TimeSeg1 = CAN_BS1_11TQ;
-  hcan1.Init.TimeSeg2 = CAN_BS2_8TQ;
+  //original
+  //hcan1.Init.TimeSeg1 = CAN_BS1_11TQ;
+  //hcan1.Init.TimeSeg2 = CAN_BS2_8TQ;
+  //for higher CAN speeds
+  hcan1.Init.TimeSeg1 = CAN_BS1_13TQ;
+  hcan1.Init.TimeSeg2 = CAN_BS2_2TQ; 
   hcan1.Init.TimeTriggeredMode = DISABLE;
   hcan1.Init.AutoBusOff = ENABLE;
   hcan1.Init.AutoWakeUp = DISABLE;

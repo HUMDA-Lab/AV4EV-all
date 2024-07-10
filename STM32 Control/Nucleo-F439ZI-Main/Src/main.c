@@ -334,22 +334,32 @@ void HAL_CAN_RxFifo0MsgPendingCallback(CAN_HandleTypeDef *hcan1)
   {
 	  Error_Handler();
   }
-
+//TBW
   if (RxHeader.StdId == 0x101)
   {
 	  speed_measured = CAN_RxData[0] / 10.0;
   }
+  //VESC
+
+  if (RxHeader.StdId == 0x901)
+  {
+	  speed_measured = CAN_RxData[0] / 10.0;
+
+	  uint32_t _tmp = CAN_RxData[3]<<24 | CAN_RxData[2]<<16 | CAN_RxData[1]<<8 | CAN_RxData[0];
+	  speed_measured = _tmp;
+  }
+
 
   if (RxHeader.StdId == 0x102)
   {
 	  brake_measured = CAN_RxData[0];
   }
-
+  //LSBW
   if (RxHeader.StdId == 0x103)
   {
 	  steer_measured = CAN_RxData[0] - steer_max;
   }
-
+  //USBW
   if (RxHeader.StdId == 0x104)
   {
 	  steering_wheel = CAN_RxData[0] - steer_max;
@@ -573,11 +583,20 @@ static void MX_CAN1_Init(void)
 
   /* USER CODE END CAN1_Init 1 */
   hcan1.Instance = CAN1;
-  hcan1.Init.Prescaler = 42;
+  //original setting
+  //hcan1.Init.Prescaler = 42;
+  //target CAN speed 250k
+  hcan1.Init.Prescaler = 12;
+  //target CAN speed 500k
+  hcan1.Init.Prescaler = 6;
   hcan1.Init.Mode = CAN_MODE_NORMAL;
   hcan1.Init.SyncJumpWidth = CAN_SJW_1TQ;
+  //original
+  //hcan1.Init.TimeSeg1 = CAN_BS1_11TQ;
+  //hcan1.Init.TimeSeg2 = CAN_BS2_8TQ;
+  //for higher speed
   hcan1.Init.TimeSeg1 = CAN_BS1_11TQ;
-  hcan1.Init.TimeSeg2 = CAN_BS2_8TQ;
+  hcan1.Init.TimeSeg2 = CAN_BS2_2TQ; 
   hcan1.Init.TimeTriggeredMode = DISABLE;
   hcan1.Init.AutoBusOff = ENABLE;
   hcan1.Init.AutoWakeUp = ENABLE;
